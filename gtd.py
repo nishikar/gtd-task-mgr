@@ -51,7 +51,7 @@ def add_task(task):
 def delegate_task(name, assignee):
   if name in tasks_cache and assignee:
     task = tasks_cache[name]
-    tasks_cache[name] = Task(task.name, task.desc, task.due, assignee, 'Delegated')
+    tasks_cache[name] = Task(task.name, task.desc, task.due, assignee, 'Waiting')
 
 def due_task(name, due):
   if name in tasks_cache and due:
@@ -61,24 +61,50 @@ def due_task(name, due):
 def complete_task(name):
   delete_task(name)
 
+def task_action(action):
+  print("enter value?: ", end="")
+  inp = input()
+  # validate input
+  if action == "delete":
+    delete_task(inp)
+  elif action == "delegate":
+    inputs = inp.split(',') if inp else ""
+    if inputs and len(inputs) >= 2:
+      delegate_task(inputs[0].strip(), inputs[1].strip())
+  elif action == "complete":
+    complete_task(inp)
+  elif action == "due_date":
+    inputs = inp.split(',') if inp else ""
+    if inputs and len(inputs) >= 2:
+      due_task(inputs[0].strip(), inputs[1].strip())
+  elif action == "add":
+    inputs = inp.split(',') if inp else ""
+    if inputs and len(inputs) >= 4:
+      add_task(Task(inputs[0].strip(), inputs[1].strip(), inputs[2].strip(), inputs[3].strip(), 'Open')) # todo default assignee??
+
+def main_input():
+  inp = int(input()) # todo validate input
+  # todo parse task from input
+  # todo create enum for action and status
+  if inp == 1:
+    task_action('add')
+  elif inp == 2:
+    task_action('delete')
+  elif inp == 3:
+    task_action('delegate')
+  elif inp == 4:
+    task_action('complete')
+  elif inp == 5:
+    task_action('due_date')
+  return inp
+
 def main():
   load_tasks()
   inp = -1 
   while inp != 0:
     display_tasks(list_tasks())
     print("?: ", end=""),
-    inp = int(input()) # todo validate input
-    # todo parse task from input
-    if inp == 1:
-      add_task(Task('example20', 'example task 20', '', 'Nishikar', 'Open'))
-    elif inp == 2:
-      delete_task('example5')
-    elif inp == 3:
-      delegate_task('example2', 'chetan')
-    elif inp == 4:
-      complete_task('example6')
-    elif inp == 5:
-      due_task('example20', '2020-06-21')
+    inp = main_input()
 
 if __name__ == '__main__':
   main() 
